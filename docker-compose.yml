@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      - cockroachdb
+    env_file:
+      - .env
+    command: >
+      sh -c "
+      until nc -z ${DB_HOST} ${DB_PORT}; do
+        echo 'Esperando a CockroachDB...';
+        sleep 2;
+      done;
+      ./main"
+  cockroachdb:
+    image: cockroachdb/cockroach:v23.1.11
+    container_name: cockroachdb
+    command: >
+      start-single-node --insecure
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+    volumes:
+      - cockroach-data:/cockroach/cockroach-data
+
+volumes:
+  cockroach-data:
