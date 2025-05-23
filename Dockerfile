@@ -1,26 +1,29 @@
-# Usa una imagen base de Go con soporte para apt-get
-FROM golang:1.20-buster
+# Usa una imagen base de Go
+FROM golang:1.23
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia los archivos del proyecto al contenedor
+# Copia primero los archivos de dependencias y descárgalas
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copia el resto del proyecto
 COPY . .
 
-# Instala netcat para el script wait-for-it.sh
-RUN apt-get update && apt-get install -y netcat
+# Instala Air para hot reload
+RUN go install github.com/air-verse/air@latest
+
+# Instala netcat (solo si usas 'nc' en docker-compose)
+RUN apt-get update && apt-get install -y netcat-openbsd
 
 # Asegúrate de que el script sea ejecutable
 RUN chmod +x wait-for-it.sh
 
-# Descarga las dependencias
 RUN go mod tidy
 
-# Compila la aplicación
-RUN go build -o main .
-
-# Expone el puerto en el que se ejecutará tu aplicación
+# Expone el puerto de la app
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
-CMD ["./wait-for-it.sh", "cockroachdb:26257", "--", "./main"]
+# Ejecuta Air como comando principal
+CMD ["air"]

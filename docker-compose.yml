@@ -16,7 +16,7 @@ services:
         echo 'Esperando a CockroachDB...';
         sleep 2;
       done;
-      ./main"
+      air"
 
   cockroachdb:
     image: cockroachdb/cockroach:v23.1.11
