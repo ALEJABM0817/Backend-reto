@@ -43,5 +43,5 @@ func main() {
 	r.GET("/analyst-ratings", handlers.GetAnalystRatings)
 	r.GET("/recommendation", handlers.RecommendBestStock)
 
-	r.Run(":8080")
+	r.Run(":8082")
 }

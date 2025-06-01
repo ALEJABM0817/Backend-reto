@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/ALEJABM0817/TGolang/models" // <-- Importa tu paquete de modelos
 	"github.com/joho/godotenv"
@@ -14,10 +15,7 @@ import (
 var DB *gorm.DB
 
 func Connect() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Fail to load file .env")
-	}
+	_ = godotenv.Load()
 
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
@@ -28,9 +26,21 @@ func Connect() {
 		os.Getenv("DB_PORT"),
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	var db *gorm.DB
+	var err error
+	maxAttempts := 10
+
+	for attempts := 1; attempts <= maxAttempts; attempts++ {
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err == nil {
+			break
+		}
+		log.Printf("Intento %d: Error al conectar a la base de datos: %v", attempts, err)
+		time.Sleep(2 * time.Second)
+	}
+
 	if err != nil {
-		log.Fatal("Error to conect database: ", err)
+		log.Fatal("No se pudo conectar a la base de datos después de varios intentos: ", err)
 	}
 
 	DB = db

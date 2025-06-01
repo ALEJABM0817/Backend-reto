@@ -2,9 +2,9 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
-      - "8081:8080"
+      - "8082:8082"
     depends_on:
       - cockroachdb
       - init-db

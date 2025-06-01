@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
-# filepath: c:\Users\Steven\Desktop\TGolang\wait-for-it.sh
 
 set -e
 
-host="$1"
+hostport="$1"
 shift
-cmd="$@"
 
-until nc -z "$host"; do
-  echo "Esperando a que el servicio $host esté disponible..."
+host=$(echo "$hostport" | cut -d: -f1)
+port=$(echo "$hostport" | cut -d: -f2)
+
+until nc -z "$host" "$port"; do
+  echo "Esperando a que el servicio $host:$port esté disponible..."
   sleep 2
 done
 
-echo "El servicio $host está disponible. Ejecutando el comando..."
-exec $cmd
+echo "El servicio $host:$port está disponible. Ejecutando el comando..."
+exec "$@"

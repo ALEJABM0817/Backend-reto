@@ -1,29 +1,21 @@
-# Usa una imagen base de Go
-FROM golang:1.23
+FROM golang:1.23 AS builder
 
-# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
-
-# Copia primero los archivos de dependencias y descárgalas
-COPY go.mod go.sum ./
-RUN go mod download
-
-# Copia el resto del proyecto
 COPY . .
+RUN CGO_ENABLED=0 go build -o main .
 
-# Instala Air para hot reload
-RUN go install github.com/air-verse/air@latest
+FROM debian:bullseye-slim
 
-# Instala netcat (solo si usas 'nc' en docker-compose)
-RUN apt-get update && apt-get install -y netcat-openbsd
+WORKDIR /app
+COPY --from=builder /app/main .
+COPY wait-for-it.sh .
 
-# Asegúrate de que el script sea ejecutable
-RUN chmod +x wait-for-it.sh
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    netcat-openbsd && \
+    chmod +x wait-for-it.sh && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN go mod tidy
+EXPOSE 8082
 
-# Expone el puerto de la app
-EXPOSE 8080
-
-# Ejecuta Air como comando principal
-CMD ["air"]
+CMD ["./wait-for-it.sh", "localhost:26257", "--", "./main"]
