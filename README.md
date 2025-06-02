@@ -4,6 +4,18 @@ API RESTful desarrollada en Go para analizar y recomendar acciones bursátiles. 
 
 ---
 
+## 🌐 URLs de la aplicación desplegada en AWS
+
+- **Frontend:**  
+  [http://frontend-alb-32408893.us-east-1.elb.amazonaws.com/](http://frontend-alb-32408893.us-east-1.elb.amazonaws.com/)
+
+- **Backend:**  
+  [http://backend-alb-574949025.us-east-1.elb.amazonaws.com/](http://backend-alb-574949025.us-east-1.elb.amazonaws.com/)  
+  Puedes probar el endpoint `/ping` en:  
+  [http://backend-alb-574949025.us-east-1.elb.amazonaws.com/ping](http://backend-alb-574949025.us-east-1.elb.amazonaws.com/ping)
+
+---
+
 ## 🚀 Requisitos Previos
 
 - [Docker](https://www.docker.com/products/docker-desktop) y [Docker Compose](https://docs.docker.com/compose/) instalados.

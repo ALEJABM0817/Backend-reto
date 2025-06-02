@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/ALEJABM0817/TGolang/models" // <-- Importa tu paquete de modelos
+	"github.com/ALEJABM0817/TGolang/models"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -45,7 +45,6 @@ func Connect() {
 
 	DB = db
 	log.Println("Conexion successful")
-	log.Println("DSN:", dsn)
 
 	if err := DB.AutoMigrate(&models.AnalystRating{}); err != nil {
 		log.Fatal("Table migration error: ", err)

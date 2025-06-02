@@ -30,10 +30,6 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	r.OPTIONS("/*path", func(c *gin.Context) {
-		c.Status(204)
-	})
-
 	database.Connect()
 
 	r.GET("/ping", func(c *gin.Context) {
