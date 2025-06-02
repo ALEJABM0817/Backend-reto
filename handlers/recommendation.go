@@ -30,7 +30,6 @@ func RecommendBestStock(c *gin.Context) {
 		Ticker    string
 		BuyCount  int
 		MaxTarget float64
-		MaxDiff   float64
 		Company   string
 	}
 
@@ -43,21 +42,9 @@ func RecommendBestStock(c *gin.Context) {
 		}
 		if strings.EqualFold(r.RatingTo, "Buy") {
 			stats[ticker].BuyCount++
-			targetFrom := parseTarget(r.TargetFrom)
-			targetTo := parseTarget(r.TargetTo)
-			maxTarget := targetFrom
-			if targetTo > targetFrom {
-				maxTarget = targetTo
-			}
-			if maxTarget > stats[ticker].MaxTarget {
-				stats[ticker].MaxTarget = maxTarget
-			}
-			diff := targetTo - targetFrom
-			if diff < 0 {
-				diff = -diff
-			}
-			if diff > stats[ticker].MaxDiff {
-				stats[ticker].MaxDiff = diff
+			target := parseTarget(r.TargetTo)
+			if target > stats[ticker].MaxTarget {
+				stats[ticker].MaxTarget = target
 			}
 		}
 	}
@@ -67,10 +54,10 @@ func RecommendBestStock(c *gin.Context) {
 		statList = append(statList, s)
 	}
 	sort.Slice(statList, func(i, j int) bool {
-		if statList[i].MaxDiff == statList[j].MaxDiff {
-			return statList[i].BuyCount > statList[j].BuyCount
+		if statList[i].BuyCount == statList[j].BuyCount {
+			return statList[i].MaxTarget > statList[j].MaxTarget
 		}
-		return statList[i].MaxDiff > statList[j].MaxDiff
+		return statList[i].BuyCount > statList[j].BuyCount
 	})
 
 	if len(statList) == 0 {
@@ -84,6 +71,5 @@ func RecommendBestStock(c *gin.Context) {
 		"company":        best.Company,
 		"buy_count":      best.BuyCount,
 		"max_target_to":  best.MaxTarget,
-		"max_diff":       best.MaxDiff,
 	})
 }
