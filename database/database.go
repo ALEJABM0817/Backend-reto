@@ -44,7 +44,7 @@ func Connect() {
 	}
 
 	DB = db
-	log.Println("Conexion successful")
+	log.Println("Conexión exitosa a la base de datos")
 
 	if err := DB.AutoMigrate(&models.AnalystRating{}); err != nil {
 		log.Fatal("Table migration error: ", err)

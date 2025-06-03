@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"time"
 
@@ -17,6 +18,7 @@ func main() {
 	frontendURL := os.Getenv("FRONTEND_URL")
 	if frontendURL == "" {
 		frontendURL = "http://localhost:5173"
+		log.Println("FRONTEND_URL no definido, usando valor por defecto:", frontendURL)
 	}
 
 	r := gin.Default()
@@ -39,5 +41,7 @@ func main() {
 	r.GET("/analyst-ratings", handlers.GetAnalystRatings)
 	r.GET("/recommendation", handlers.RecommendBestStock)
 
-	r.Run(":8082")
+	if err := r.Run(":8082"); err != nil {
+		log.Fatalf("No se pudo iniciar el servidor: %v", err)
+	}
 }
