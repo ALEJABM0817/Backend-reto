@@ -24,19 +24,19 @@ func parseTarget(target string) float64 {
 	return f
 }
 
+type stat struct {
+	Ticker    string
+	BuyCount  int
+	MaxTarget float64
+	Company   string
+}
+
 func RecommendBestStock(c *gin.Context) {
 	var ratings []models.AnalystRating
 	if err := database.DB.Find(&ratings).Error; err != nil {
 		fmt.Printf("Error al consultar la base de datos: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno al consultar los datos"})
 		return
-	}
-
-	type stat struct {
-		Ticker    string
-		BuyCount  int
-		MaxTarget float64
-		Company   string
 	}
 
 	stats := map[string]*stat{}
